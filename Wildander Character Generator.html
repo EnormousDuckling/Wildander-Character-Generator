@@ -3,20 +3,35 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Combat Skills</title>
+<title>Wildlander Character Generator</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Spectral:wght@400;500;600&display=swap');
 
   :root {
     --bg: #14110f;
+    --bg-glow: #241d17;
     --parchment: #cbb890;
     --ember: #a8452c;
     --ember-bright: #d05a3a;
+    --ember-border: #7a2f1c;
+    --ember-shadow: #5f2416;
     --steel: #6d7b7c;
     --gold: #b8934a;
     --line: #3a322a;
+    --surface-dim: #2c2620;
+    --text-on-accent: #f2e6cf;
+    --status: #c46a5a;
+    --magicka-a: #556f83;
+    --magicka-b: #314655;
+    --stamina-a: #78835f;
+    --stamina-b: #4a5536;
+    --health-a: #a2462d;
+    --health-b: #833522;
+
+    --fs-xs: 0.75rem;
+    --fs-sm: 0.85rem;
+    --fs-md: 0.95rem;
   }
 
   * { box-sizing: border-box; }
@@ -24,7 +39,7 @@
   body {
     margin: 0;
     min-height: 100vh;
-    background: radial-gradient(circle at 50% 0%, #241d17 0%, var(--bg) 55%);
+    background: radial-gradient(circle at 50% 0%, var(--bg-glow) 0%, var(--bg) 55%);
     color: var(--parchment);
     font-family: 'Spectral', serif;
     display: flex;
@@ -39,7 +54,7 @@
   .reset-btn {
     font-family: 'Cinzel', serif;
     font-weight: 600;
-    font-size: 0.75rem;
+    font-size: var(--fs-xs);
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--steel);
@@ -60,7 +75,7 @@
   .section-card {
     border: 2px solid var(--gold);
     border-radius: 6px;
-    background: #1a1512;
+    background: var(--bg);
     padding: 26px 30px;
     margin-bottom: 24px;
   }
@@ -68,10 +83,6 @@
   .section-card + .section-card {
     border-top: 2px solid var(--gold);
     padding-top: 26px;
-  }
-
-  @media (max-width: 460px) {
-    .section-card { padding: 20px; }
   }
 
   .section-head {
@@ -90,24 +101,13 @@
     text-align: center;
     margin: 0;
     color: var(--gold);
-    text-shadow: 0 0 18px rgba(184, 147, 74, 0.35);
+    text-shadow: 0 0 18px rgba(184, 147, 74, 0.2);
   }
 
   h1.sub {
     font-size: 1.4rem;
     color: var(--steel);
-    text-shadow: 0 0 18px rgba(109, 123, 124, 0.25);
-  }
-
-
-  .subtitle {
-    text-align: center;
-    color: var(--steel);
-    font-size: 0.85rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    margin-bottom: 36px;
-    margin-top: 6px;
+    text-shadow: 0 0 18px rgba(109, 123, 124, 0.2);
   }
 
   .roll-row { display: flex; align-items: center; gap: 18px; margin-bottom: 10px; }
@@ -115,16 +115,16 @@
   .roll-btn {
     font-family: 'Cinzel', serif;
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: var(--fs-md);
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: #f2e6cf;
+    color: var(--text-on-accent);
     background: linear-gradient(180deg, var(--ember-bright), var(--ember));
-    border: 1px solid #7a2f1c;
+    border: 1px solid var(--ember-border);
     padding: 14px 28px;
     border-radius: 3px;
     cursor: pointer;
-    box-shadow: 0 4px 0 #5f2416, 0 6px 14px rgba(0,0,0,0.4);
+    box-shadow: 0 4px 0 var(--ember-shadow), 0 6px 14px rgba(0,0,0,0.4);
     transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.2s ease;
   }
 
@@ -132,20 +132,20 @@
 
   .roll-btn:active:not(:disabled) {
     transform: translateY(3px);
-    box-shadow: 0 1px 0 #5f2416, 0 2px 6px rgba(0,0,0,0.4);
+    box-shadow: 0 1px 0 var(--ember-shadow), 0 2px 6px rgba(0,0,0,0.4);
   }
 
   .roll-btn:disabled {
-    background: #2c2620;
+    background: var(--surface-dim);
     border-color: var(--line);
-    color: #6a5f50;
+    color: var(--steel);
     cursor: not-allowed;
     box-shadow: none;
   }
 
   .rolls-left {
     font-family: 'Cinzel', serif;
-    font-size: 0.85rem;
+    font-size: var(--fs-sm);
     letter-spacing: 0.05em;
     color: var(--steel);
   }
@@ -153,8 +153,8 @@
   .rolls-left span { color: var(--ember-bright); font-size: 1.1rem; font-weight: 700; }
 
   .hint {
-    font-size: 0.78rem;
-    color: #c46a5a;
+    font-size: var(--fs-sm);
+    color: var(--status);
     font-style: italic;
     margin: 10px 0 24px;
   }
@@ -171,18 +171,18 @@
     min-height: 30px;
   }
 
-  .skill-row.empty .skill-name { color: #4b4338; font-style: italic; }
+  .skill-row.empty .skill-name { color: var(--steel); font-style: italic; }
 
-  .skill-name { font-size: 1.05rem; letter-spacing: 0.02em; }
+  .skill-row .skill-name { font-size: 1.05rem; letter-spacing: 0.02em; }
 
-  .skill-row.is-major .skill-name { color: #e7cd8a; }
-  .skill-row.is-banned .skill-name { color: #8a5a4d; text-decoration: line-through; text-decoration-color: var(--ember); }
+  .skill-row.is-major .skill-name { color: var(--gold); }
+  .skill-row.is-banned .skill-name { color: var(--ember-bright); text-decoration: line-through; text-decoration-color: var(--ember); }
 
   .tag-btns { display: flex; gap: 8px; flex-shrink: 0; }
 
   .tag-btn {
     font-family: 'Cinzel', serif;
-    font-size: 0.68rem;
+    font-size: var(--fs-xs);
     letter-spacing: 0.06em;
     text-transform: uppercase;
     padding: 6px 12px;
@@ -197,7 +197,7 @@
   .tag-btn:hover:not(:disabled) { border-color: var(--gold); color: var(--gold); }
   .tag-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-  .tag-btn.major.active { background: rgba(184, 147, 74, 0.18); border-color: var(--gold); color: var(--gold); }
+  .tag-btn.major.active { background: rgba(184, 147, 74, 0.2); border-color: var(--gold); color: var(--gold); }
   .tag-btn.banned.active { background: rgba(168, 69, 44, 0.2); border-color: var(--ember-bright); color: var(--ember-bright); }
 
   .legend {
@@ -205,7 +205,7 @@
     display: flex;
     justify-content: center;
     gap: 26px;
-    font-size: 0.78rem;
+    font-size: var(--fs-sm);
     color: var(--steel);
     letter-spacing: 0.04em;
   }
@@ -221,7 +221,7 @@
 
   .group-btn {
     font-family: 'Cinzel', serif;
-    font-size: 0.72rem;
+    font-size: var(--fs-xs);
     letter-spacing: 0.05em;
     text-transform: uppercase;
     padding: 10px 16px;
@@ -238,7 +238,7 @@
   .group-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
   .group-btn.active {
-    background: rgba(184, 147, 74, 0.18);
+    background: rgba(184, 147, 74, 0.2);
     border-color: var(--gold);
     color: var(--gold);
   }
@@ -247,7 +247,7 @@
   .summary-card {
     border: 2px solid var(--gold);
     border-radius: 6px;
-    background: #1a1512;
+    background: var(--bg);
     padding: 26px 30px;
     margin-bottom: 22px;
   }
@@ -264,7 +264,7 @@
     display: block;
     font-family: 'Cinzel', serif;
     font-weight: 700;
-    font-size: 0.78rem;
+    font-size: var(--fs-xs);
     letter-spacing: 0.05em;
     text-transform: uppercase;
     color: var(--parchment);
@@ -274,7 +274,7 @@
   .summary-value {
     font-style: italic;
     color: var(--gold);
-    font-size: 0.95rem;
+    font-size: var(--fs-md);
   }
 
   .summary-value.placeholder { color: var(--steel); }
@@ -286,7 +286,7 @@
     font-family: 'Spectral', serif;
     font-style: italic;
     color: var(--gold);
-    font-size: 0.95rem;
+    font-size: var(--fs-md);
     width: 100%;
     padding: 0 0 3px;
   }
@@ -299,20 +299,18 @@
   .stat-row { display: flex; align-items: center; gap: 12px; margin-bottom: 9px; }
 
   .stat-label {
-    font-family: 'Cinzel', serif;
-    font-weight: 700;
-    font-size: 0.75rem;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--parchment);
-    width: 68px;
+    font-family: 'Spectral', serif;
+    font-style: italic;
+    font-size: var(--fs-md);
+    color: var(--gold);
+    width: 78px;
     flex-shrink: 0;
   }
 
   .stat-bar-track {
     flex: 1;
-    height: 16px;
-    background: #2c2620;
+    height: 24px;
+    background: var(--surface-dim);
     border-radius: 2px;
     overflow: hidden;
     border: 1px solid var(--line);
@@ -321,21 +319,21 @@
   .stat-bar-fill {
     height: 100%;
     width: 100%;
-    background: linear-gradient(180deg, var(--ember-bright), var(--ember));
+    background: linear-gradient(180deg, var(--health-a), var(--health-b));
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'Cinzel', serif;
-    font-size: 0.65rem;
+    font-family: 'Spectral', serif;
+    font-style: italic;
     font-weight: 700;
-    letter-spacing: 0.05em;
-    color: #f2e6cf;
+    font-size: var(--fs-md);
+    color: var(--gold);
     transition: width 0.3s ease;
     white-space: nowrap;
   }
 
-  .stat-bar-fill.magicka { background: linear-gradient(180deg, #6d8fa8, #3f5a6e); }
-  .stat-bar-fill.stamina { background: linear-gradient(180deg, #9aa87a, #5f6e46); }
+  .stat-bar-fill.magicka { background: linear-gradient(180deg, var(--magicka-a), var(--magicka-b)); }
+  .stat-bar-fill.stamina { background: linear-gradient(180deg, var(--stamina-a), var(--stamina-b)); }
 
   .summary-bullet-list {
     list-style: none;
@@ -346,7 +344,7 @@
   .summary-bullet-list li {
     font-style: italic;
     color: var(--gold);
-    font-size: 0.85rem;
+    font-size: var(--fs-md);
     line-height: 1.5;
     padding-left: 14px;
     position: relative;
@@ -370,19 +368,30 @@
   .stat-line {
     display: flex;
     justify-content: space-between;
-    font-size: 0.85rem;
     margin-bottom: 6px;
   }
 
-  .stat-line .stat-line-label { color: var(--parchment); font-weight: 600; }
-  .stat-line .stat-line-value { color: var(--steel); font-style: italic; }
+  .stat-line .stat-line-label {
+    font-family: 'Spectral', serif;
+    font-style: italic;
+    font-size: var(--fs-md);
+    color: var(--gold);
+  }
+  .stat-line .stat-line-value {
+    font-family: 'Spectral', serif;
+    font-style: italic;
+    font-size: var(--fs-md);
+    color: var(--gold);
+  }
+  .stat-line .stat-line-value.placeholder { color: var(--steel); }
 
   .summary-subhead {
     font-family: 'Cinzel', serif;
     font-weight: 700;
-    font-size: 0.9rem;
+    font-size: var(--fs-xs);
     letter-spacing: 0.05em;
-    color: var(--gold);
+    text-transform: uppercase;
+    color: var(--parchment);
     margin: 0 0 12px;
   }
 
@@ -397,12 +406,13 @@
     justify-content: space-between;
     gap: 10px;
     padding: 4px 0;
-    font-size: 0.88rem;
+    font-size: var(--fs-md);
     font-style: italic;
   }
 
   .summary-skill-row .skill-name { color: var(--gold); }
-  .summary-skill-row .skill-value { color: var(--steel); }
+  .summary-skill-row .skill-value { color: var(--gold); }
+  .summary-skill-row .skill-value.placeholder { color: var(--steel); }
   .summary-skill-row.empty-note { color: var(--steel); font-style: italic; }
 
   .summary-columns {
@@ -423,21 +433,20 @@
   .summary-placeholder-text {
     font-style: italic;
     color: var(--steel);
-    font-size: 0.88rem;
+    font-size: var(--fs-md);
   }
 
   .summary-power-name {
     font-style: italic;
-    font-weight: 700;
     color: var(--gold);
-    font-size: 0.9rem;
+    font-size: var(--fs-md);
     margin-bottom: 3px;
   }
 
   .summary-power-desc {
     font-style: italic;
-    color: var(--parchment);
-    font-size: 0.85rem;
+    color: var(--gold);
+    font-size: var(--fs-md);
     line-height: 1.5;
   }
 
@@ -446,16 +455,10 @@
     .summary-columns { grid-template-columns: repeat(2, 1fr); }
   }
 
-  @media (max-width: 460px) {
-    .summary-grid { grid-template-columns: 1fr; }
-    .summary-columns { grid-template-columns: 1fr; }
-    .summary-card { padding: 20px; }
-  }
-
   .intro-card {
     text-align: center;
     color: var(--parchment);
-    font-size: 0.85rem;
+    font-size: var(--fs-sm);
     line-height: 1.6;
   }
 
@@ -470,7 +473,7 @@
     font-family: 'Cinzel', serif;
     font-weight: 700;
     font-size: 1.6rem;
-    color: #f2e6cf;
+    color: var(--text-on-accent);
     margin: 0;
     letter-spacing: 0.02em;
   }
@@ -479,7 +482,7 @@
     position: absolute;
     top: 2px;
     right: 0;
-    font-size: 0.72rem;
+    font-size: var(--fs-xs);
     font-style: italic;
     color: var(--gold);
   }
@@ -492,7 +495,7 @@
     font-family: 'Cinzel', serif;
     font-weight: 700;
     font-size: 1.05rem;
-    color: #f2e6cf;
+    color: var(--text-on-accent);
     text-align: center;
     margin: 0 0 16px;
   }
@@ -500,8 +503,8 @@
   .intro-tier {
     font-family: 'Cinzel', serif;
     font-weight: 600;
-    font-size: 0.9rem;
-    color: #f2e6cf;
+    font-size: var(--fs-md);
+    color: var(--text-on-accent);
     text-align: center;
     margin: 20px 0 8px;
   }
@@ -524,7 +527,7 @@
     flex: 1;
     font-family: 'Cinzel', serif;
     font-weight: 600;
-    font-size: 0.82rem;
+    font-size: var(--fs-sm);
     letter-spacing: 0.04em;
     text-transform: uppercase;
     padding: 12px 10px;
@@ -552,16 +555,16 @@
   .nav-btn {
     font-family: 'Cinzel', serif;
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: var(--fs-md);
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: #f2e6cf;
+    color: var(--text-on-accent);
     background: linear-gradient(180deg, var(--ember-bright), var(--ember));
-    border: 1px solid #7a2f1c;
+    border: 1px solid var(--ember-border);
     padding: 14px 32px;
     border-radius: 3px;
     cursor: pointer;
-    box-shadow: 0 4px 0 #5f2416, 0 6px 14px rgba(0,0,0,0.4);
+    box-shadow: 0 4px 0 var(--ember-shadow), 0 6px 14px rgba(0,0,0,0.4);
     transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.2s ease;
   }
 
@@ -569,13 +572,13 @@
 
   .nav-btn:active:not(:disabled) {
     transform: translateY(3px);
-    box-shadow: 0 1px 0 #5f2416, 0 2px 6px rgba(0,0,0,0.4);
+    box-shadow: 0 1px 0 var(--ember-shadow), 0 2px 6px rgba(0,0,0,0.4);
   }
 
   .nav-btn:disabled {
-    background: #2c2620;
+    background: var(--surface-dim);
     border-color: var(--line);
-    color: #6a5f50;
+    color: var(--steel);
     cursor: not-allowed;
     box-shadow: none;
   }
@@ -593,7 +596,7 @@
   .export-btn {
     font-family: 'Cinzel', serif;
     font-weight: 600;
-    font-size: 0.75rem;
+    font-size: var(--fs-xs);
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--gold);
@@ -606,7 +609,7 @@
   }
 
   .export-btn:hover:not(:disabled) {
-    background: rgba(184, 147, 74, 0.15);
+    background: rgba(184, 147, 74, 0.2);
   }
 
   .export-btn:disabled {
@@ -617,9 +620,13 @@
   #export-hint { text-align: center; margin-top: 0; margin-bottom: 24px; min-height: 1em; }
 
   @media (max-width: 460px) {
+    .section-card { padding: 20px; }
+    .summary-grid { grid-template-columns: 1fr; }
+    .summary-columns { grid-template-columns: 1fr; }
+    .summary-card { padding: 20px; }
     .intro-byline { position: static; display: block; margin-top: 4px; }
     .intro-title { font-size: 1.25rem; }
-    .tab-btn { font-size: 0.68rem; padding: 10px 4px; }
+    .tab-btn { font-size: var(--fs-xs); padding: 10px 4px; }
   }
 </style>
 </head>
@@ -714,1743 +721,4 @@
 
       <div class="legend">
         <div><b id="noncombat-majorCount">0</b>/1 Major selected</div>
-        <div><b id="noncombat-bannedCount">0</b>/1 Banned selected</div>
-      </div>
-
-      <ul class="skill-list" id="noncombat-skillList"></ul>
-    </section>
-
-    <section class="section section-card" id="banned1-section">
-      <div class="section-head">
-        <h1 class="sub">Banned Skills #1</h1>
-      </div>
-
-      <div class="roll-row">
-        <button class="roll-btn" id="banned1-rollBtn" disabled>Roll banned skills</button>
-        <div class="rolls-left"><span id="banned1-rollsLeft">2</span> rolls left</div>
-      </div>
-      <div class="hint" id="banned1-hint"></div>
-
-      <div class="legend">
-        <div><b id="banned1-bannedCount">0</b>/2 Banned selected</div>
-      </div>
-
-      <ul class="skill-list" id="banned1-skillList"></ul>
-    </section>
-
-    <section class="section section-card" id="banned2-section">
-      <div class="section-head">
-        <h1 class="sub">Banned Skills #2</h1>
-      </div>
-
-      <div class="roll-row">
-        <button class="roll-btn" id="banned2-rollBtn" disabled>Roll banned skills</button>
-        <div class="rolls-left"><span id="banned2-rollsLeft">2</span> rolls left</div>
-      </div>
-      <div class="hint" id="banned2-hint"></div>
-
-      <div class="legend">
-        <div><b id="banned2-bannedCount">0</b>/2 Banned selected</div>
-      </div>
-
-      <ul class="skill-list" id="banned2-skillList"></ul>
-    </section>
-
-    <section class="section section-card" id="leftover-section">
-      <div class="section-head">
-        <h1 class="sub">Leftover Skills</h1>
-      </div>
-
-      <div class="roll-row">
-        <button class="roll-btn" id="leftover-rollBtn" disabled>Roll leftover skills</button>
-        <div class="rolls-left"><span id="leftover-rollsLeft">1</span> rolls left</div>
-      </div>
-      <div class="hint" id="leftover-hint"></div>
-
-      <div class="legend">
-        <div><b id="leftover-majorCount">0</b>/3 Major selected</div>
-      </div>
-
-      <ul class="skill-list" id="leftover-skillList"></ul>
-    </section>
-
-    <section class="section section-card" id="race-section">
-      <div class="section-head">
-        <h1 class="sub">Race</h1>
-      </div>
-
-      <div class="roll-row">
-        <button class="roll-btn" id="race-rollBtn">Roll race</button>
-        <div class="rolls-left"><span id="race-rollsLeft">2</span> rolls left</div>
-      </div>
-      <div class="hint" id="race-hint"></div>
-
-      <div class="legend">
-        <div><b id="race-selectedCount">0</b>/1 Selected</div>
-      </div>
-
-      <ul class="skill-list" id="race-skillList"></ul>
-    </section>
-
-    <section class="section section-card" id="standingstone-section">
-      <div class="section-head">
-        <h1 class="sub">Standing Stone</h1>
-      </div>
-
-      <div class="group-row" id="standingstone-groupRow">
-        <button class="group-btn" data-group="Warrior Group">Warrior Group</button>
-        <button class="group-btn" data-group="Mage Group">Mage Group</button>
-        <button class="group-btn" data-group="Thief Group">Thief Group</button>
-        <button class="group-btn" data-group="Serpent Group">Serpent Group</button>
-      </div>
-
-      <div class="roll-row">
-        <button class="roll-btn" id="standingstone-rollBtn" disabled>Roll standing stone</button>
-        <div class="rolls-left"><span id="standingstone-rollsLeft">2</span> rolls left</div>
-      </div>
-      <div class="hint" id="standingstone-hint"></div>
-
-      <div class="legend">
-        <div><b id="standingstone-selectedCount">0</b>/1 Selected</div>
-      </div>
-
-      <ul class="skill-list" id="standingstone-skillList"></ul>
-    </section>
-
-    <section class="section section-card" id="fate-section">
-      <div class="section-head">
-        <h1 class="sub">Fate</h1>
-      </div>
-
-      <div class="roll-row">
-        <button class="roll-btn" id="fate-rollBtn" disabled>Roll fate</button>
-        <div class="rolls-left"><span id="fate-rollsLeft">1</span> rolls left</div>
-      </div>
-      <div class="hint" id="fate-hint"></div>
-
-      <div class="legend">
-        <div><b id="fate-selectedCount">0</b>/1 Selected</div>
-      </div>
-
-      <ul class="skill-list" id="fate-skillList"></ul>
-    </section>
-
-    <section class="section section-card" id="startingarea-section">
-      <div class="section-head">
-        <h1 class="sub">Starting Area</h1>
-      </div>
-
-      <div class="roll-row">
-        <button class="roll-btn" id="startingarea-rollBtn" disabled>Roll starting area</button>
-        <div class="rolls-left"><span id="startingarea-rollsLeft">2</span> rolls left</div>
-      </div>
-      <div class="hint" id="startingarea-hint"></div>
-
-      <div class="legend">
-        <div><b id="startingarea-selectedCount">0</b>/1 Selected</div>
-      </div>
-
-      <ul class="skill-list" id="startingarea-skillList"></ul>
-    </section>
-
-    <section class="section section-card" id="dragonborn-section">
-      <div class="section-head">
-        <h1 class="sub">Dragonborn</h1>
-      </div>
-
-      <div class="roll-row">
-        <button class="roll-btn" id="dragonborn-rollBtn" disabled>Roll dragonborn</button>
-        <div class="rolls-left"><span id="dragonborn-rollsLeft">2</span> rolls left</div>
-      </div>
-      <div class="hint" id="dragonborn-hint"></div>
-
-      <div class="legend">
-        <div><b id="dragonborn-selectedCount">0</b>/1 Selected</div>
-      </div>
-
-      <ul class="skill-list" id="dragonborn-skillList"></ul>
-    </section>
-
-    <div class="nav-row">
-      <button class="nav-btn" id="goToSummaryBtn" data-goto-tab="summary" disabled>Character Sheet</button>
-    </div>
-    <div class="hint" id="goToSummary-hint"></div>
-    </div>
-
-    <div class="tab-panel" id="tab-summary" style="display: none;">
-    <div class="export-row">
-      <button class="export-btn" id="exportPngBtn">Download PNG</button>
-      <button class="export-btn" id="exportJpgBtn">Download JPG</button>
-      <button class="export-btn" id="exportPdfBtn">Download PDF</button>
-    </div>
-    <div class="hint" id="export-hint"></div>
-    <section class="section" id="summary-section">
-      <div class="summary-card">
-        <div class="summary-grid">
-          <div class="summary-field">
-            <span class="summary-label">Name</span>
-            <input class="summary-input" type="text" id="summary-name" placeholder="Enter Character Name">
-          </div>
-          <div class="summary-field">
-            <span class="summary-label">Race</span>
-            <span class="summary-value" id="summary-race">Not chosen yet</span>
-          </div>
-          <div class="summary-field">
-            <span class="summary-label">Standing Stone</span>
-            <span class="summary-value" id="summary-standingstone">Not chosen yet</span>
-          </div>
-          <div class="summary-field">
-            <span class="summary-label">Fate</span>
-            <span class="summary-value" id="summary-fate">Not chosen yet</span>
-          </div>
-
-          <div class="summary-field">
-            <span class="summary-label">Sex</span>
-            <input class="summary-input" type="text" id="summary-sex" placeholder="Enter Character Sex">
-          </div>
-          <div class="summary-field">
-            <span class="summary-label">Specialization</span>
-            <span class="summary-value" id="summary-specialization">Mixed</span>
-          </div>
-          <div class="summary-field">
-            <span class="summary-label">Dragonborn</span>
-            <span class="summary-value" id="summary-dragonborn">Not chosen yet</span>
-          </div>
-          <div class="summary-field">
-            <span class="summary-label">Area</span>
-            <span class="summary-value" id="summary-area">Not chosen yet</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="summary-card">
-        <div class="summary-columns">
-          <div>
-            <div class="stat-block">
-              <div class="stat-row">
-                <span class="stat-label">Health</span>
-                <div class="stat-bar-track"><div class="stat-bar-fill health" id="summary-health-bar">Not chosen yet</div></div>
-              </div>
-              <div class="stat-row">
-                <span class="stat-label">Magicka</span>
-                <div class="stat-bar-track"><div class="stat-bar-fill magicka" id="summary-magicka-bar">Not chosen yet</div></div>
-              </div>
-              <div class="stat-row">
-                <span class="stat-label">Stamina</span>
-                <div class="stat-bar-track"><div class="stat-bar-fill stamina" id="summary-stamina-bar">Not chosen yet</div></div>
-              </div>
-            </div>
-
-            <div class="stat-block">
-              <div class="stat-line"><span class="stat-line-label">Magicka Regen</span><span class="stat-line-value" id="summary-magickaregen">Not chosen yet</span></div>
-              <div class="stat-line"><span class="stat-line-label">Stamina Regen</span><span class="stat-line-value" id="summary-staminaregen">Not chosen yet</span></div>
-            </div>
-
-            <div class="stat-block">
-              <div class="stat-line"><span class="stat-line-label">Carry Weight</span><span class="stat-line-value" id="summary-carryweight">Not chosen yet</span></div>
-              <div class="stat-line"><span class="stat-line-label">Unarmed Damage</span><span class="stat-line-value" id="summary-unarmed">Not chosen yet</span></div>
-            </div>
-          </div>
-
-          <div>
-            <h2 class="summary-subhead">Major Skills</h2>
-            <ul class="summary-skill-list" id="summary-majorList"></ul>
-          </div>
-
-          <div>
-            <h2 class="summary-subhead">Minor Skills</h2>
-            <ul class="summary-skill-list" id="summary-minorList"></ul>
-          </div>
-
-          <div>
-            <h2 class="summary-subhead">Banned Skills</h2>
-            <ul class="summary-skill-list" id="summary-bannedList"></ul>
-          </div>
-        </div>
-
-        <div class="summary-columns summary-descriptions">
-          <div class="summary-text-block">
-            <h2 class="summary-subhead">Abilities</h2>
-            <ul class="summary-bullet-list" id="summary-abilitiesList"></ul>
-          </div>
-
-          <div class="summary-text-block">
-            <h2 class="summary-subhead">Traits</h2>
-            <ul class="summary-bullet-list" id="summary-traitsList"></ul>
-          </div>
-
-          <div class="summary-text-block">
-            <h2 class="summary-subhead">Power</h2>
-            <div id="summary-power">
-              <div class="summary-placeholder-text">Not chosen yet</div>
-            </div>
-          </div>
-
-          <div class="summary-text-block">
-            <h2 class="summary-subhead">Standing Stone</h2>
-            <div id="summary-stoneDesc">
-              <div class="summary-placeholder-text">Not chosen yet</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    </div>
-
-  </div>
-
-<script>
-  const COMBAT_SKILLS = [
-    "Alteration", "Block", "Conjuration", "Destruction", "Illusion",
-    "Marksman", "One-Handed", "Restoration", "Two-Handed"
-  ];
-  const NONCOMBAT_SKILLS = [
-    "Alchemy", "Enchanting", "Lockpicking", "Pickpocket",
-    "Smithing", "Speechcraft", "Sneak"
-  ];
-  const EXTRA_SKILLS = ["Evasion", "Heavy Armor"];
-  const MASTER_SKILLS = [...COMBAT_SKILLS, ...NONCOMBAT_SKILLS, ...EXTRA_SKILLS];
-  const RACE_LIST = [
-    "Altmer", "Argonian", "Bosmer", "Breton", "Dunmer",
-    "Imperial", "Khajiit", "Nord", "Orsimer", "Redguard"
-  ];
-  const RACE_DATA = {
-  "Altmer": {
-    "health": 90,
-    "magicka": "130(+50)",
-    "stamina": 80,
-    "carryWeight": 70,
-    "staminaRegen": 1.55,
-    "magickaRegen": 1.2,
-    "unarmedDamage": 5,
-    "abilities": [
-      "75% Resist Disease",
-      "40% Weakness to Magic",
-      "50 Fortify Magicka"
-    ],
-    "traits": [
-      "Power attack Stamina costs 110%",
-      "Spell Magnitude 105%",
-      "Spell Durations 105%",
-      "Spell costs 95%",
-      "Spell Range 110%",
-      "Can brew potions without a perk in Alchemy",
-      "Can recharge enchanted items without a perk in Enchanting"
-    ],
-    "power": {
-      "name": "Highborn",
-      "desc": "Restore 100 Magicka/s for 30 seconds"
-    }
-  },
-  "Argonian": {
-    "health": 105,
-    "magicka": 90,
-    "stamina": 120,
-    "carryWeight": 85,
-    "staminaRegen": 1.6,
-    "magickaRegen": 1.1,
-    "unarmedDamage": "15(+15)",
-    "abilities": [
-      "75% Resist Disease",
-      "90% Resist Poison",
-      "Waterbreathing",
-      "Strong Stomach",
-      "Claws: Your sharp claws deal 15 additional unarmed damage."
-    ],
-    "traits": [
-      "Can brew potions without a perk in Alchemy",
-      "Can sneak without a perk in Sneak"
-    ],
-    "power": {
-      "name": "Histskin",
-      "desc": "Restore 1 Health/s for a hour, and 10 Health/s for 60 seconds"
-    }
-  },
-  "Bosmer": {
-    "health": 90,
-    "magicka": 110,
-    "stamina": 120,
-    "carryWeight": 70,
-    "staminaRegen": 1.65,
-    "magickaRegen": 1.05,
-    "unarmedDamage": 5,
-    "abilities": [
-      "75% Resist Disease",
-      "Strong Stomach"
-    ],
-    "traits": [
-      "Loots Meat from Humanoid corpses",
-      "Power attack Stamina costs 110%",
-      "Can brew potions without a perk in Alchemy",
-      "Can sneak without a perk in Sneak"
-    ],
-    "power": {
-      "name": "Command Animal",
-      "desc": "All animals around you will become your allies for the next day, however they will not follow you on your way."
-    }
-  },
-  "Breton": {
-    "health": 90,
-    "magicka": 120,
-    "stamina": 90,
-    "carryWeight": 70,
-    "staminaRegen": 1.55,
-    "magickaRegen": 1.15,
-    "unarmedDamage": 7,
-    "abilities": [
-      "20% Magic Resistance"
-    ],
-    "traits": [
-      "Power attack Stamina costs 110%",
-      "Can brew potions without a perk in Alchemy",
-      "Can recharge enchanted items without a perk in Enchanting"
-    ],
-    "power": {
-      "name": "Dragonskin",
-      "desc": "Allows you to absorb 100% of the Magicka from hostile spells for 8 seconds."
-    }
-  },
-  "Dunmer": {
-    "health": 100,
-    "magicka": 100,
-    "stamina": 100,
-    "carryWeight": 75,
-    "staminaRegen": 1.6,
-    "magickaRegen": 1.1,
-    "unarmedDamage": 8,
-    "abilities": [
-      "65% Fire Resistance"
-    ],
-    "traits": [
-      "Can brew potions without a perk in Alchemy",
-      "Can recharge enchanted items without a perk in Enchanting",
-      "Can sneak without a perk in Sneak."
-    ],
-    "power": {
-      "name": "Ancestor’s Wrath",
-      "desc": "Ignores 95% of all physical damage for 30 seconds."
-    }
-  },
-  "Imperial": {
-    "health": 110,
-    "magicka": 100,
-    "stamina": "110(+50)",
-    "carryWeight": 80,
-    "staminaRegen": 1.9,
-    "magickaRegen": 1.1,
-    "unarmedDamage": 8,
-    "abilities": [
-      "Imperial Discipline: Imperials are granted 50 additional stamina, regenerate it faster and can sprint much longer due to the drills many of them had to go through."
-    ],
-    "traits": [
-      "80% Stamina cost for Power Attack",
-      "Restore 2 Stamina a second while Sprinting."
-    ],
-    "power": {
-      "name": "Voice of the Emperor",
-      "desc": "+25 fortify speechcraft for 30 seconds."
-    }
-  },
-  "Khajiit": {
-    "health": 90,
-    "magicka": 90,
-    "stamina": 120,
-    "carryWeight": 75,
-    "staminaRegen": 1.65,
-    "magickaRegen": 1,
-    "unarmedDamage": "15(+25)",
-    "abilities": [
-      "Claws: Your sharp claws deal 25 additional unarmed damage.",
-      "Strong Stomach"
-    ],
-    "traits": [
-      "Can pickpocket without a perk in Pickpocket",
-      "Can sneak without a perk in Sneak",
-      "35% fall damage",
-      "115% Movement Speed",
-      "5 Lockpicking Expertise"
-    ],
-    "power": {
-      "name": "Night Eye",
-      "desc": "Your Khajiit eyes allow you to see in the dark at will."
-    }
-  },
-  "Nord": {
-    "health": 120,
-    "magicka": 80,
-    "stamina": 120,
-    "carryWeight": 85,
-    "staminaRegen": 1.65,
-    "magickaRegen": 1.05,
-    "unarmedDamage": 9,
-    "abilities": [
-      "50% Resist Frost",
-      "25% Resist Shock"
-    ],
-    "traits": [
-      "75% Stamina cost for Power Attack"
-    ],
-    "power": {
-      "name": "Tongue’s Trance",
-      "desc": "Your Thu’um can be used more often."
-    }
-  },
-  "Orsimer": {
-    "health": 130,
-    "magicka": 60,
-    "stamina": 110,
-    "carryWeight": 90,
-    "staminaRegen": 1.7,
-    "magickaRegen": 1,
-    "unarmedDamage": 10,
-    "abilities": [
-      "Strong Stomach"
-    ],
-    "traits": [
-      "65% Stamina cost for Power Attack"
-    ],
-    "power": {
-      "name": "Berserker Rage",
-      "desc": "Fall into a wild rage that stops your ability to feel pain and greatly increases dealt physical damage and Stamina for 30 seconds."
-    }
-  },
-  "Redguard": {
-    "health": 110,
-    "magicka": 70,
-    "stamina": 120,
-    "carryWeight": 80,
-    "staminaRegen": 1.65,
-    "magickaRegen": 1,
-    "unarmedDamage": 8,
-    "abilities": [
-      "75% Resist Disease",
-      "75% Resist Poison"
-    ],
-    "traits": [
-      "80% Stamina cost for Power Attack"
-    ],
-    "power": {
-      "name": "Adrenaline Rush",
-      "desc": "Increases stamina regeneration greatly for 30 seconds, and also allows to act much faster than normal and renders immune to most paralysis effects in this time."
-    }
-  }
-};
-  const FATE_LIST = [
-    "Crossing the Border", "Staying in an Inn", "Surviving in the Wild"
-  ];
-  const STARTING_AREA_LISTS = {
-    "Crossing the Border": ["Falkreath", "Helgen", "Riften", "Windhelm"],
-    "Staying in an Inn": [
-      "Dawnstar", "Falkreath", "Markarth", "Morthal", "Riften",
-      "Solitude", "Whiterun", "Windhelm", "Winterhold"
-    ],
-    "Surviving in the Wild": [
-      "Dawnstar", "Falkreath", "Markarth", "Morthal", "Riften",
-      "Solitude", "Whiterun", "Windhelm", "Winterhold"
-    ]
-  };
-  const SKILL_DATA = {
-  "Altmer": {
-    "Alchemy": 0,
-    "Alteration": 5,
-    "Block": 0,
-    "Conjuration": 5,
-    "Destruction": 10,
-    "Enchanting": 5,
-    "Evasion": 0,
-    "Heavy Armor": 0,
-    "Illusion": 10,
-    "Lockpicking": 0,
-    "Marksman": 0,
-    "One-Handed": 0,
-    "Pickpocket": 0,
-    "Restoration": 5,
-    "Smithing": 0,
-    "Sneak": 0,
-    "Speechcraft": 0,
-    "Two-Handed": 0
-  },
-  "Argonian": {
-    "Alchemy": 0,
-    "Alteration": 5,
-    "Block": 0,
-    "Conjuration": 0,
-    "Destruction": 0,
-    "Enchanting": 0,
-    "Evasion": 10,
-    "Heavy Armor": 0,
-    "Illusion": 0,
-    "Lockpicking": 10,
-    "Marksman": 0,
-    "One-Handed": 0,
-    "Pickpocket": 5,
-    "Restoration": 5,
-    "Smithing": 0,
-    "Sneak": 5,
-    "Speechcraft": 0,
-    "Two-Handed": 0
-  },
-  "Bosmer": {
-    "Alchemy": 5,
-    "Alteration": 0,
-    "Block": 0,
-    "Conjuration": 0,
-    "Destruction": 0,
-    "Enchanting": 0,
-    "Evasion": 5,
-    "Heavy Armor": 0,
-    "Illusion": 0,
-    "Lockpicking": 5,
-    "Marksman": 15,
-    "One-Handed": 0,
-    "Pickpocket": 5,
-    "Restoration": 0,
-    "Smithing": 0,
-    "Sneak": 5,
-    "Speechcraft": 0,
-    "Two-Handed": 0
-  },
-  "Breton": {
-    "Alchemy": 5,
-    "Alteration": 5,
-    "Block": 0,
-    "Conjuration": 15,
-    "Destruction": 0,
-    "Enchanting": 0,
-    "Evasion": 0,
-    "Heavy Armor": 0,
-    "Illusion": 5,
-    "Lockpicking": 0,
-    "Marksman": 0,
-    "One-Handed": 0,
-    "Pickpocket": 0,
-    "Restoration": 5,
-    "Smithing": 0,
-    "Sneak": 0,
-    "Speechcraft": 5,
-    "Two-Handed": 0
-  },
-  "Dunmer": {
-    "Alchemy": 0,
-    "Alteration": 5,
-    "Block": 0,
-    "Conjuration": 0,
-    "Destruction": 10,
-    "Enchanting": 0,
-    "Evasion": 5,
-    "Heavy Armor": 0,
-    "Illusion": 5,
-    "Lockpicking": 0,
-    "Marksman": 0,
-    "One-Handed": 10,
-    "Pickpocket": 0,
-    "Restoration": 0,
-    "Smithing": 0,
-    "Sneak": 5,
-    "Speechcraft": 0,
-    "Two-Handed": 0
-  },
-  "Imperial": {
-    "Alchemy": 0,
-    "Alteration": 0,
-    "Block": 5,
-    "Conjuration": 0,
-    "Destruction": 5,
-    "Enchanting": 0,
-    "Evasion": 0,
-    "Heavy Armor": 5,
-    "Illusion": 0,
-    "Lockpicking": 0,
-    "Marksman": 0,
-    "One-Handed": 5,
-    "Pickpocket": 0,
-    "Restoration": 10,
-    "Smithing": 0,
-    "Sneak": 0,
-    "Speechcraft": 10,
-    "Two-Handed": 0
-  },
-  "Khajiit": {
-    "Alchemy": 5,
-    "Alteration": 0,
-    "Block": 0,
-    "Conjuration": 0,
-    "Destruction": 0,
-    "Enchanting": 0,
-    "Evasion": 0,
-    "Heavy Armor": 0,
-    "Illusion": 0,
-    "Lockpicking": 5,
-    "Marksman": 5,
-    "One-Handed": 5,
-    "Pickpocket": 5,
-    "Restoration": 0,
-    "Smithing": 0,
-    "Sneak": 15,
-    "Speechcraft": 0,
-    "Two-Handed": 0
-  },
-  "Nord": {
-    "Alchemy": 0,
-    "Alteration": 0,
-    "Block": 5,
-    "Conjuration": 0,
-    "Destruction": 0,
-    "Enchanting": 0,
-    "Evasion": 5,
-    "Heavy Armor": 5,
-    "Illusion": 0,
-    "Lockpicking": 0,
-    "Marksman": 0,
-    "One-Handed": 5,
-    "Pickpocket": 0,
-    "Restoration": 0,
-    "Smithing": 10,
-    "Sneak": 0,
-    "Speechcraft": 0,
-    "Two-Handed": 10
-  },
-  "Orsimer": {
-    "Alchemy": 0,
-    "Alteration": 0,
-    "Block": 5,
-    "Conjuration": 0,
-    "Destruction": 0,
-    "Enchanting": 0,
-    "Evasion": 5,
-    "Heavy Armor": 10,
-    "Illusion": 0,
-    "Lockpicking": 0,
-    "Marksman": 0,
-    "One-Handed": 5,
-    "Pickpocket": 0,
-    "Restoration": 0,
-    "Smithing": 10,
-    "Sneak": 0,
-    "Speechcraft": 0,
-    "Two-Handed": 5
-  },
-  "Redguard": {
-    "Alchemy": 0,
-    "Alteration": 5,
-    "Block": 5,
-    "Conjuration": 0,
-    "Destruction": 5,
-    "Enchanting": 0,
-    "Evasion": 0,
-    "Heavy Armor": 0,
-    "Illusion": 0,
-    "Lockpicking": 0,
-    "Marksman": 5,
-    "One-Handed": 15,
-    "Pickpocket": 0,
-    "Restoration": 0,
-    "Smithing": 5,
-    "Sneak": 0,
-    "Speechcraft": 0,
-    "Two-Handed": 0
-  }
-};
-  const YES_NO_LIST = ["Yes", "No"];
-
-  function uniqueRandomIndices(max, count) {
-    const indices = [];
-    while (indices.length < count) {
-      const roll = Math.floor(Math.random() * max);
-      if (!indices.includes(roll)) indices.push(roll);
-    }
-    return indices;
-  }
-
-  // ---- Major/Ban section (Combat & Non-combat) ----
-  function setupMajorBanSection({ prefix, allSkills, slotCount, maxMajor, maxRolls, canRoll, hintPriorName, hintNextName, onFirstRoll }) {
-    let rollsLeft = maxRolls;
-    let currentSkills = new Array(slotCount).fill(null);
-    let majors = [];
-    let banned = null;
-    let locked = false;
-    let hasRolledOnce = false;
-    canRoll = canRoll || (() => true);
-
-    const section = document.getElementById(`${prefix}-section`);
-    const rollBtn = document.getElementById(`${prefix}-rollBtn`);
-    const rollsLeftEl = document.getElementById(`${prefix}-rollsLeft`);
-    const hintEl = document.getElementById(`${prefix}-hint`);
-    const listEl = document.getElementById(`${prefix}-skillList`);
-    const majorCountEl = document.getElementById(`${prefix}-majorCount`);
-    const bannedCountEl = document.getElementById(`${prefix}-bannedCount`);
-
-    function rollSkills() {
-      if (locked || rollsLeft <= 0 || !canRoll()) return;
-
-      rollsLeft -= 1;
-      rollsLeftEl.textContent = rollsLeft;
-
-      const rolledIndices = uniqueRandomIndices(allSkills.length, slotCount);
-      currentSkills = rolledIndices.map(idx => allSkills[idx]);
-
-      majors = [];
-      banned = null;
-
-      if (!hasRolledOnce) {
-        hasRolledOnce = true;
-        if (onFirstRoll) onFirstRoll();
-      }
-
-      render();
-      updateGates();
-    }
-
-    function toggleMajor(skill) {
-      if (locked) return;
-      if (banned === skill) banned = null;
-
-      const idx = majors.indexOf(skill);
-      if (idx !== -1) {
-        majors.splice(idx, 1);
-      } else {
-        if (majors.length >= maxMajor) majors.pop();
-        majors.push(skill);
-      }
-      render();
-      updateGates();
-    }
-
-    function toggleBanned(skill) {
-      if (locked) return;
-      const majorIdx = majors.indexOf(skill);
-      if (majorIdx !== -1) majors.splice(majorIdx, 1);
-
-      banned = (banned === skill) ? null : skill;
-      render();
-      updateGates();
-    }
-
-    function render() {
-      listEl.innerHTML = '';
-
-      for (let i = 0; i < slotCount; i++) {
-        const skill = currentSkills[i];
-        const li = document.createElement('li');
-        li.className = 'skill-row';
-
-        if (!skill) {
-          li.classList.add('empty');
-          li.innerHTML = `<span class="skill-name">&mdash;</span>`;
-          listEl.appendChild(li);
-          continue;
-        }
-
-        const isMajor = majors.includes(skill);
-        const isBanned = banned === skill;
-        if (isMajor) li.classList.add('is-major');
-        if (isBanned) li.classList.add('is-banned');
-
-        li.innerHTML = `
-          <span class="skill-name">${skill}</span>
-          <div class="tag-btns">
-            <button class="tag-btn major ${isMajor ? 'active' : ''}" ${locked ? 'disabled' : ''}>Major</button>
-            <button class="tag-btn banned ${isBanned ? 'active' : ''}" ${locked ? 'disabled' : ''}>Ban</button>
-          </div>
-        `;
-
-        const [majorBtn, bannedBtn] = li.querySelectorAll('.tag-btn');
-        majorBtn.addEventListener('click', () => toggleMajor(skill));
-        bannedBtn.addEventListener('click', () => toggleBanned(skill));
-
-        listEl.appendChild(li);
-      }
-
-      majorCountEl.textContent = majors.length;
-      bannedCountEl.textContent = banned ? 1 : 0;
-      rollBtn.disabled = locked || rollsLeft <= 0 || !canRoll();
-      section.classList.toggle('locked', locked);
-
-      if (locked && hintNextName) {
-        hintEl.textContent = `Skills were chosen and '${hintNextName}' was rolled.`;
-        hintEl.style.display = 'block';
-      } else if (!locked && !canRoll() && hintPriorName) {
-        hintEl.textContent = `Choice of '${hintPriorName}' was not made.`;
-        hintEl.style.display = 'block';
-      } else {
-        hintEl.style.display = 'none';
-      }
-    }
-
-    rollBtn.addEventListener('click', rollSkills);
-    render();
-
-    return {
-      getUsed: () => [...majors, ...(banned ? [banned] : [])],
-      getMajors: () => [...majors],
-      getBanned: () => (banned ? [banned] : []),
-      isComplete: () => majors.length === maxMajor && banned !== null,
-      lock: () => { locked = true; render(); },
-      refreshGate: () => render()
-    };
-  }
-
-  // ---- Ban-only section (Banned Skills #1 & #2) ----
-  function setupBanOnlySection({ prefix, slotCount, maxBanned, maxRolls, getPool, canRoll, hintPriorName, hintNextName, onFirstRoll }) {
-    let rollsLeft = maxRolls;
-    let currentSkills = [];
-    let bannedList = [];
-    let locked = false;
-    let hasRolledOnce = false;
-    let lastPool = [];
-
-    const section = document.getElementById(`${prefix}-section`);
-    const rollBtn = document.getElementById(`${prefix}-rollBtn`);
-    const rollsLeftEl = document.getElementById(`${prefix}-rollsLeft`);
-    const hintEl = document.getElementById(`${prefix}-hint`);
-    const listEl = document.getElementById(`${prefix}-skillList`);
-    const bannedCountEl = document.getElementById(`${prefix}-bannedCount`);
-
-    function rollSkills() {
-      if (locked || rollsLeft <= 0 || !canRoll()) return;
-
-      rollsLeft -= 1;
-      rollsLeftEl.textContent = rollsLeft;
-
-      lastPool = getPool();
-      const count = Math.min(slotCount, lastPool.length);
-      const rolledIndices = uniqueRandomIndices(lastPool.length, count);
-      currentSkills = rolledIndices.map(idx => lastPool[idx]);
-      bannedList = [];
-
-      if (!hasRolledOnce) {
-        hasRolledOnce = true;
-        onFirstRoll();
-      }
-
-      render();
-      updateGates();
-    }
-
-    function toggleBanned(skill) {
-      if (locked) return;
-      const idx = bannedList.indexOf(skill);
-      if (idx !== -1) {
-        bannedList.splice(idx, 1);
-      } else {
-        if (bannedList.length >= maxBanned) bannedList.pop();
-        bannedList.push(skill);
-      }
-      render();
-      updateGates();
-    }
-
-    function render() {
-      listEl.innerHTML = '';
-
-      for (let i = 0; i < slotCount; i++) {
-        const skill = currentSkills[i];
-        const li = document.createElement('li');
-        li.className = 'skill-row';
-
-        if (!skill) {
-          li.classList.add('empty');
-          li.innerHTML = `<span class="skill-name">&mdash;</span>`;
-          listEl.appendChild(li);
-          continue;
-        }
-
-        const isBanned = bannedList.includes(skill);
-        if (isBanned) li.classList.add('is-banned');
-
-        li.innerHTML = `
-          <span class="skill-name">${skill}</span>
-          <div class="tag-btns">
-            <button class="tag-btn banned ${isBanned ? 'active' : ''}" ${locked ? 'disabled' : ''}>Ban</button>
-          </div>
-        `;
-
-        const banBtn = li.querySelector('.tag-btn');
-        banBtn.addEventListener('click', () => toggleBanned(skill));
-
-        listEl.appendChild(li);
-      }
-
-      bannedCountEl.textContent = bannedList.length;
-      rollBtn.disabled = locked || rollsLeft <= 0 || !canRoll();
-      section.classList.toggle('locked', locked);
-
-      if (locked && hintNextName) {
-        hintEl.textContent = `Skills were chosen and '${hintNextName}' was rolled.`;
-        hintEl.style.display = 'block';
-      } else if (!locked && !canRoll() && hintPriorName) {
-        hintEl.textContent = `Choice of '${hintPriorName}' was not made.`;
-        hintEl.style.display = 'block';
-      } else {
-        hintEl.style.display = 'none';
-      }
-    }
-
-    rollBtn.addEventListener('click', rollSkills);
-    render();
-
-    return {
-      getPool,
-      getBanned: () => [...bannedList],
-      isBanningComplete: () => bannedList.length === maxBanned,
-      lock: () => { locked = true; render(); },
-      refreshGate: () => render()
-    };
-  }
-
-  // ---- Leftover Skills section (reveal-all, choose 3 Major) ----
-  function setupLeftoverSection({ prefix, maxMajor, maxRolls, getPool, canRoll, hintPriorName, hintNextName, onFirstRoll }) {
-    let rollsLeft = maxRolls;
-    let currentSkills = [];
-    let majors = [];
-    let locked = false;
-    let hasRolledOnce = false;
-    canRoll = canRoll || (() => true);
-
-    const section = document.getElementById(`${prefix}-section`);
-    const rollBtn = document.getElementById(`${prefix}-rollBtn`);
-    const rollsLeftEl = document.getElementById(`${prefix}-rollsLeft`);
-    const hintEl = document.getElementById(`${prefix}-hint`);
-    const listEl = document.getElementById(`${prefix}-skillList`);
-    const majorCountEl = document.getElementById(`${prefix}-majorCount`);
-
-    function rollSkills() {
-      if (locked || rollsLeft <= 0 || !canRoll()) return;
-
-      rollsLeft -= 1;
-      rollsLeftEl.textContent = rollsLeft;
-
-      const pool = getPool();
-      currentSkills = [...pool].sort((a, b) => a.localeCompare(b));
-      majors = [];
-
-      if (!hasRolledOnce) {
-        hasRolledOnce = true;
-        if (onFirstRoll) onFirstRoll();
-      }
-
-      render();
-      updateGates();
-    }
-
-    function toggleMajor(skill) {
-      if (locked) return;
-      const idx = majors.indexOf(skill);
-      if (idx !== -1) {
-        majors.splice(idx, 1);
-      } else {
-        if (majors.length >= maxMajor) majors.pop();
-        majors.push(skill);
-      }
-      render();
-      updateGates();
-    }
-
-    function render() {
-      listEl.innerHTML = '';
-
-      currentSkills.forEach(skill => {
-        const li = document.createElement('li');
-        li.className = 'skill-row';
-
-        const isMajor = majors.includes(skill);
-        if (isMajor) li.classList.add('is-major');
-
-        li.innerHTML = `
-          <span class="skill-name">${skill}</span>
-          <div class="tag-btns">
-            <button class="tag-btn major ${isMajor ? 'active' : ''}" ${locked ? 'disabled' : ''}>Major</button>
-          </div>
-        `;
-
-        const majorBtn = li.querySelector('.tag-btn');
-        majorBtn.addEventListener('click', () => toggleMajor(skill));
-
-        listEl.appendChild(li);
-      });
-
-      majorCountEl.textContent = majors.length;
-      rollBtn.disabled = locked || rollsLeft <= 0 || !canRoll();
-      section.classList.toggle('locked', locked);
-
-      if (locked && hintNextName) {
-        hintEl.textContent = `Skills were chosen and '${hintNextName}' was rolled.`;
-        hintEl.style.display = 'block';
-      } else if (!locked && !canRoll() && hintPriorName) {
-        hintEl.textContent = `Choice of '${hintPriorName}' was not made.`;
-        hintEl.style.display = 'block';
-      } else {
-        hintEl.style.display = 'none';
-      }
-    }
-
-    rollBtn.addEventListener('click', rollSkills);
-    render();
-
-    return {
-      getMajors: () => [...majors],
-      isComplete: () => majors.length === maxMajor,
-      lock: () => { locked = true; render(); },
-      refreshGate: () => render()
-    };
-  }
-
-  let combatHandle, noncombatHandle, banned1Handle, banned2Handle, leftoverHandle, raceHandle, standingStoneHandle, fateHandle, startingAreaHandle, dragonbornHandle;
-
-  // ---- Single-select section (Race) ----
-  function setupSingleSelectSection({ prefix, allSkills, slotCount, maxRolls, canRoll, hintPriorName, hintNextName, onFirstRoll }) {
-    let rollsLeft = maxRolls;
-    let currentSkills = new Array(slotCount).fill(null);
-    let selected = null;
-    let locked = false;
-    let hasRolledOnce = false;
-    canRoll = canRoll || (() => true);
-
-    const section = document.getElementById(`${prefix}-section`);
-    const rollBtn = document.getElementById(`${prefix}-rollBtn`);
-    const rollsLeftEl = document.getElementById(`${prefix}-rollsLeft`);
-    const hintEl = document.getElementById(`${prefix}-hint`);
-    const listEl = document.getElementById(`${prefix}-skillList`);
-    const selectedCountEl = document.getElementById(`${prefix}-selectedCount`);
-
-    function rollSkills() {
-      if (locked || rollsLeft <= 0 || !canRoll()) return;
-
-      rollsLeft -= 1;
-      rollsLeftEl.textContent = rollsLeft;
-
-      const pool = (typeof allSkills === 'function') ? allSkills() : allSkills;
-      const count = Math.min(slotCount, pool.length);
-      const rolledIndices = uniqueRandomIndices(pool.length, count);
-      currentSkills = rolledIndices.map(idx => pool[idx]);
-      selected = null;
-
-      if (!hasRolledOnce) {
-        hasRolledOnce = true;
-        if (onFirstRoll) onFirstRoll();
-      }
-
-      render();
-      updateGates();
-    }
-
-    function toggleSelect(skill) {
-      if (locked) return;
-      selected = (selected === skill) ? null : skill;
-      render();
-      updateGates();
-    }
-
-    function render() {
-      listEl.innerHTML = '';
-
-      for (let i = 0; i < slotCount; i++) {
-        const skill = currentSkills[i];
-        const li = document.createElement('li');
-        li.className = 'skill-row';
-
-        if (!skill) {
-          li.classList.add('empty');
-          li.innerHTML = `<span class="skill-name">&mdash;</span>`;
-          listEl.appendChild(li);
-          continue;
-        }
-
-        const isSelected = selected === skill;
-        if (isSelected) li.classList.add('is-major');
-
-        li.innerHTML = `
-          <span class="skill-name">${skill}</span>
-          <div class="tag-btns">
-            <button class="tag-btn major ${isSelected ? 'active' : ''}" ${locked ? 'disabled' : ''}>Select</button>
-          </div>
-        `;
-
-        const selectBtn = li.querySelector('.tag-btn');
-        selectBtn.addEventListener('click', () => toggleSelect(skill));
-
-        listEl.appendChild(li);
-      }
-
-      selectedCountEl.textContent = selected ? 1 : 0;
-      rollBtn.disabled = locked || rollsLeft <= 0 || !canRoll();
-      section.classList.toggle('locked', locked);
-
-      if (locked && hintNextName) {
-        hintEl.textContent = `Skills were chosen and '${hintNextName}' was rolled.`;
-        hintEl.style.display = 'block';
-      } else if (!locked && !canRoll() && hintPriorName) {
-        hintEl.textContent = `Choice of '${hintPriorName}' was not made.`;
-        hintEl.style.display = 'block';
-      } else {
-        hintEl.style.display = 'none';
-      }
-    }
-
-    rollBtn.addEventListener('click', rollSkills);
-    render();
-
-    return {
-      getSelected: () => selected,
-      isComplete: () => selected !== null,
-      lock: () => { locked = true; render(); },
-      refreshGate: () => render()
-    };
-  }
-
-  // ---- Standing Stone section ----
-  function setupStandingStoneSection({ prefix, groups, slotCount, maxRolls, canRoll, hintPriorName, hintNextName, onFirstRoll }) {
-    let rollsLeft = maxRolls;
-    let selectedGroup = null;
-    let groupLocked = false;
-    let currentStones = [];
-    let selectedStone = null;
-    let hasRolledOnce = false;
-    let locked = false;
-    canRoll = canRoll || (() => true);
-
-    const section = document.getElementById(`${prefix}-section`);
-    const groupRow = document.getElementById(`${prefix}-groupRow`);
-    const rollBtn = document.getElementById(`${prefix}-rollBtn`);
-    const rollsLeftEl = document.getElementById(`${prefix}-rollsLeft`);
-    const hintEl = document.getElementById(`${prefix}-hint`);
-    const listEl = document.getElementById(`${prefix}-skillList`);
-    const selectedCountEl = document.getElementById(`${prefix}-selectedCount`);
-
-    function selectGroup(group) {
-      if (locked || groupLocked || !canRoll()) return;
-      selectedGroup = group;
-      currentStones = [];
-      selectedStone = null;
-      render();
-    }
-
-    function rollSkills() {
-      if (locked || rollsLeft <= 0 || !selectedGroup || !canRoll()) return;
-
-      rollsLeft -= 1;
-      rollsLeftEl.textContent = rollsLeft;
-
-      const pool = groups[selectedGroup];
-      const count = Math.min(slotCount, pool.length);
-      const rolledIndices = uniqueRandomIndices(pool.length, count);
-      currentStones = rolledIndices.map(idx => pool[idx]);
-      selectedStone = null;
-
-      if (!hasRolledOnce) {
-        hasRolledOnce = true;
-        groupLocked = true;
-        if (onFirstRoll) onFirstRoll();
-      }
-
-      render();
-      updateGates();
-    }
-
-    function toggleSelectStone(stone) {
-      if (locked) return;
-      selectedStone = (selectedStone === stone) ? null : stone;
-      render();
-      updateGates();
-    }
-
-    function render() {
-      const groupBtns = groupRow.querySelectorAll('.group-btn');
-      groupBtns.forEach(btn => {
-        const g = btn.dataset.group;
-        btn.classList.toggle('active', selectedGroup === g);
-        btn.disabled = locked || groupLocked || !canRoll();
-      });
-
-      listEl.innerHTML = '';
-      for (let i = 0; i < slotCount; i++) {
-        const stone = currentStones[i];
-        const li = document.createElement('li');
-        li.className = 'skill-row';
-
-        if (!stone) {
-          li.classList.add('empty');
-          li.innerHTML = `<span class="skill-name">&mdash;</span>`;
-          listEl.appendChild(li);
-          continue;
-        }
-
-        const isSelected = selectedStone === stone;
-        if (isSelected) li.classList.add('is-major');
-
-        li.innerHTML = `
-          <span class="skill-name">${stone}</span>
-          <div class="tag-btns">
-            <button class="tag-btn major ${isSelected ? 'active' : ''}" ${locked ? 'disabled' : ''}>Select</button>
-          </div>
-        `;
-
-        const selectBtn = li.querySelector('.tag-btn');
-        selectBtn.addEventListener('click', () => toggleSelectStone(stone));
-
-        listEl.appendChild(li);
-      }
-
-      selectedCountEl.textContent = selectedStone ? 1 : 0;
-      rollBtn.disabled = locked || rollsLeft <= 0 || !selectedGroup || !canRoll();
-      section.classList.toggle('locked', locked);
-
-      if (locked && hintNextName) {
-        hintEl.textContent = `Skills were chosen and '${hintNextName}' was rolled.`;
-        hintEl.style.display = 'block';
-      } else if (!locked && !canRoll() && hintPriorName) {
-        hintEl.textContent = `Choice of '${hintPriorName}' was not made.`;
-        hintEl.style.display = 'block';
-      } else {
-        hintEl.style.display = 'none';
-      }
-    }
-
-    groupRow.querySelectorAll('.group-btn').forEach(btn => {
-      btn.addEventListener('click', () => selectGroup(btn.dataset.group));
-    });
-    rollBtn.addEventListener('click', rollSkills);
-    render();
-
-    return {
-      getSelected: () => selectedStone,
-      isComplete: () => selectedStone !== null,
-      lock: () => { locked = true; render(); },
-      refreshGate: () => render()
-    };
-  }
-
-
-  function updateGates() {
-    if (noncombatHandle) noncombatHandle.refreshGate();
-    if (banned1Handle) banned1Handle.refreshGate();
-    if (banned2Handle) banned2Handle.refreshGate();
-    if (leftoverHandle) leftoverHandle.refreshGate();
-    if (raceHandle) raceHandle.refreshGate();
-    if (standingStoneHandle) standingStoneHandle.refreshGate();
-    if (fateHandle) fateHandle.refreshGate();
-    if (startingAreaHandle) startingAreaHandle.refreshGate();
-    if (dragonbornHandle) dragonbornHandle.refreshGate();
-    renderSummary();
-
-    if (dragonbornHandle) {
-      const btn = document.getElementById('goToSummaryBtn');
-      const hintEl = document.getElementById('goToSummary-hint');
-      const ready = dragonbornHandle.isComplete();
-      btn.disabled = !ready;
-      hintEl.textContent = ready ? '' : `Choice of 'Dragonborn' was not made.`;
-      hintEl.style.display = ready ? 'none' : 'block';
-    }
-  }
-
-  function renderSkillList(id, list, race, majorsSet) {
-    const el = document.getElementById(id);
-    el.innerHTML = '';
-    if (list.length === 0) {
-      const li = document.createElement('li');
-      li.className = 'summary-skill-row empty-note';
-      li.textContent = 'Not chosen yet';
-      el.appendChild(li);
-      return;
-    }
-    list.forEach(skill => {
-      const li = document.createElement('li');
-      li.className = 'summary-skill-row';
-      let valueText = 'Not chosen yet';
-      if (race && SKILL_DATA[race]) {
-        const base = SKILL_DATA[race][skill] || 0;
-        const bonus = majorsSet.has(skill) ? 15 : 0;
-        valueText = String(base + bonus);
-      }
-      li.innerHTML = `<span class="skill-name">${skill}</span><span class="skill-value">${valueText}</span>`;
-      el.appendChild(li);
-    });
-  }
-
-  function setSummaryValue(id, value) {
-    const el = document.getElementById(id);
-    el.textContent = value || 'Not chosen yet';
-    el.classList.toggle('placeholder', !value);
-  }
-
-  function parseStatNumber(val) {
-    if (typeof val === 'number') return val;
-    const match = String(val).match(/\d+/);
-    return match ? parseInt(match[0], 10) : 0;
-  }
-
-  function setStatBar(id, value, maxScale) {
-    const el = document.getElementById(id);
-    if (value === undefined || value === null) {
-      el.textContent = 'Not chosen yet';
-      el.style.width = '100%';
-      return;
-    }
-    el.textContent = String(value);
-    const num = parseStatNumber(value);
-    const pct = Math.max(15, Math.min(100, Math.round((num / maxScale) * 100)));
-    el.style.width = pct + '%';
-  }
-
-  function renderBulletList(id, items) {
-    const el = document.getElementById(id);
-    el.innerHTML = '';
-    if (!items || items.length === 0) {
-      const li = document.createElement('li');
-      li.className = 'empty-note';
-      li.textContent = 'Not chosen yet';
-      el.appendChild(li);
-      return;
-    }
-    items.forEach(text => {
-      const li = document.createElement('li');
-      li.textContent = text;
-      el.appendChild(li);
-    });
-  }
-
-  function renderRaceStats(race) {
-    const raceData = race ? RACE_DATA[race] : null;
-
-    if (raceData) {
-      setStatBar('summary-health-bar', raceData.health, 150);
-      setStatBar('summary-magicka-bar', raceData.magicka, 150);
-      setStatBar('summary-stamina-bar', raceData.stamina, 150);
-      document.getElementById('summary-magickaregen').textContent = raceData.magickaRegen;
-      document.getElementById('summary-staminaregen').textContent = raceData.staminaRegen;
-      document.getElementById('summary-carryweight').textContent = raceData.carryWeight;
-      document.getElementById('summary-unarmed').textContent = raceData.unarmedDamage;
-      renderBulletList('summary-abilitiesList', raceData.abilities);
-      renderBulletList('summary-traitsList', raceData.traits);
-
-      const powerEl = document.getElementById('summary-power');
-      powerEl.innerHTML = `
-        <div class="summary-power-name">${raceData.power.name}</div>
-        <div class="summary-power-desc">${raceData.power.desc}</div>
-      `;
-    } else {
-      setStatBar('summary-health-bar', null);
-      setStatBar('summary-magicka-bar', null);
-      setStatBar('summary-stamina-bar', null);
-      document.getElementById('summary-magickaregen').textContent = 'Not chosen yet';
-      document.getElementById('summary-staminaregen').textContent = 'Not chosen yet';
-      document.getElementById('summary-carryweight').textContent = 'Not chosen yet';
-      document.getElementById('summary-unarmed').textContent = 'Not chosen yet';
-      renderBulletList('summary-abilitiesList', []);
-      renderBulletList('summary-traitsList', []);
-
-      const powerEl = document.getElementById('summary-power');
-      powerEl.innerHTML = `<div class="summary-placeholder-text">Not chosen yet</div>`;
-    }
-  }
-
-  function renderStandingStoneDesc(stone) {
-    const el = document.getElementById('summary-stoneDesc');
-    const desc = stone ? STANDING_STONE_DATA[stone] : null;
-    if (desc) {
-      el.innerHTML = `<div class="summary-power-desc">${desc}</div>`;
-    } else {
-      el.innerHTML = `<div class="summary-placeholder-text">Not chosen yet</div>`;
-    }
-  }
-
-  function renderSummary() {
-    if (!combatHandle || !noncombatHandle || !banned1Handle || !banned2Handle ||
-        !leftoverHandle || !raceHandle || !standingStoneHandle || !fateHandle ||
-        !startingAreaHandle || !dragonbornHandle) return;
-
-    const race = raceHandle.getSelected();
-    const stone = standingStoneHandle.getSelected();
-
-    setSummaryValue('summary-race', race);
-    setSummaryValue('summary-standingstone', stone);
-    setSummaryValue('summary-fate', fateHandle.getSelected());
-    setSummaryValue('summary-dragonborn', dragonbornHandle.getSelected());
-    setSummaryValue('summary-area', startingAreaHandle.getSelected());
-
-    renderRaceStats(race);
-    renderStandingStoneDesc(stone);
-
-    const majors = [
-      ...combatHandle.getMajors(),
-      ...noncombatHandle.getMajors(),
-      ...leftoverHandle.getMajors()
-    ].sort((a, b) => a.localeCompare(b));
-
-    const banned = [
-      ...combatHandle.getBanned(),
-      ...noncombatHandle.getBanned(),
-      ...banned1Handle.getBanned(),
-      ...banned2Handle.getBanned()
-    ].sort((a, b) => a.localeCompare(b));
-
-    const usedSet = new Set([...majors, ...banned]);
-    const minors = MASTER_SKILLS.filter(s => !usedSet.has(s)).sort((a, b) => a.localeCompare(b));
-
-    const majorsSet = new Set(majors);
-    renderSkillList('summary-majorList', majors, race, majorsSet);
-    renderSkillList('summary-minorList', minors, race, majorsSet);
-    renderSkillList('summary-bannedList', banned, race, majorsSet);
-
-    document.getElementById('summary-specialization').textContent = computeSpecialization(majors);
-  }
-
-  combatHandle = setupMajorBanSection({
-    prefix: 'combat',
-    allSkills: COMBAT_SKILLS,
-    slotCount: 5,
-    maxMajor: 2,
-    maxRolls: 3,
-    hintNextName: 'Non-combat Skills'
-  });
-
-  noncombatHandle = setupMajorBanSection({
-    prefix: 'noncombat',
-    allSkills: NONCOMBAT_SKILLS,
-    slotCount: 4,
-    maxMajor: 1,
-    maxRolls: 3,
-    canRoll: () => combatHandle.isComplete(),
-    hintPriorName: 'Combat Skills',
-    hintNextName: 'Banned Skills #1',
-    onFirstRoll: () => { combatHandle.lock(); }
-  });
-
-  banned1Handle = setupBanOnlySection({
-    prefix: 'banned1',
-    slotCount: 6,
-    maxBanned: 2,
-    maxRolls: 2,
-    getPool: () => MASTER_SKILLS.filter(s =>
-      !combatHandle.getUsed().includes(s) && !noncombatHandle.getUsed().includes(s)
-    ),
-    canRoll: () => combatHandle.isComplete() && noncombatHandle.isComplete(),
-    hintPriorName: 'Non-combat Skills',
-    hintNextName: 'Banned Skills #2',
-    onFirstRoll: () => { noncombatHandle.lock(); }
-  });
-
-  banned2Handle = setupBanOnlySection({
-    prefix: 'banned2',
-    slotCount: 5,
-    maxBanned: 2,
-    maxRolls: 2,
-    getPool: () => banned1Handle.getPool().filter(s => !banned1Handle.getBanned().includes(s)),
-    canRoll: () => banned1Handle.isBanningComplete(),
-    hintPriorName: 'Banned Skills #1',
-    hintNextName: 'Leftover Skills',
-    onFirstRoll: () => { banned1Handle.lock(); }
-  });
-
-  leftoverHandle = setupLeftoverSection({
-    prefix: 'leftover',
-    maxMajor: 3,
-    maxRolls: 1,
-    getPool: () => MASTER_SKILLS.filter(s =>
-      !combatHandle.getUsed().includes(s) &&
-      !noncombatHandle.getUsed().includes(s) &&
-      !banned1Handle.getBanned().includes(s) &&
-      !banned2Handle.getBanned().includes(s)
-    ),
-    canRoll: () => banned2Handle.isBanningComplete(),
-    hintPriorName: 'Banned Skills #2',
-    hintNextName: 'Race',
-    onFirstRoll: () => { banned2Handle.lock(); }
-  });
-
-  raceHandle = setupSingleSelectSection({
-    prefix: 'race',
-    allSkills: RACE_LIST,
-    slotCount: 3,
-    maxRolls: 2,
-    canRoll: () => leftoverHandle.isComplete(),
-    hintPriorName: 'Leftover Skills',
-    hintNextName: 'Standing Stone',
-    onFirstRoll: () => { leftoverHandle.lock(); }
-  });
-
-  const STANDING_STONE_GROUPS = {
-    'Warrior Group': ['The Lady', 'The Lord', 'The Steed', 'The Warrior'],
-    'Mage Group': ['The Mage', 'The Apprentice', 'The Atronach', 'The Ritual'],
-    'Thief Group': ['The Lover', 'The Shadow', 'The Thief', 'The Tower'],
-    'Serpent Group': ['The Serpent']
-  };
-  const STANDING_STONE_DATA = {
-  "The Lady": "Those under the sign of the Lady regenerate Stamina faster. 50% faster Stamina regen",
-  "The Lord": "The Stone of the Lord grants those who possess its blessing increased damage resistance and weakened hostile spells. 120% damage resistance, 15% magic resistance",
-  "The Steed": "The Steed grants those who bear its blessing increased Stamina. Fortify Stamina 100 points",
-  "The Warrior": "The Warrior strengthens those who bear his blessing, allowing a more efficient use with all kinds of weaponry. +10 Marksman, +10 One-Handed, +10 Two-Handed, +10 Armor Penetration",
-  "The Apprentice": "The Apprentice greatly enhances magicka regeneration. 200% faster Magicka regen, 25% decrease to magic resistance",
-  "The Atronach": "The Sign of the Atronach grants additional Magicka and a chance for Spell Absorption, but makes it almost impossible to passively regenerate magicka, reduces the efficacy of magicka potions by one third, and negates the long-term benefits offered by cooked meals. 0% chance of magicka regen, 50% spell absorption, fortify Magicka by 350 points",
-  "The Mage": "Those under the Sign of the Mage are granted additional Magicka and find it easier to focus their thoughts while running. Fortify Magicka 100 points",
-  "The Ritual": "Those under the Sign of the Ritual are capable of animating hordes of undead for a limited duration once each day. Daily power to raise the dead",
-  "The Lover": "Those under the sign of the lover find it easier to be attractive, intriguing and also use speech to get what they want… Fortify Speech 25 points",
-  "The Shadow": "Those under the Sign of the Shadow are able of becoming invisible and inaudible once a day. Daily power of muffle and invisibility for 300 seconds",
-  "The Thief": "The Thief grants wide-spread abilities to those who bear her blessing. It improves sneaking, pickpocketing and lockpicking skills and grants lockpicking expertise. Furthermore it increases armor penetration with one-handed and ranged weapons. +5 Armor Penetration, +15 Fortify Sneak, +15 Fortify Pickpocket, +5 Fortify Lockpicking, +20 Fortify Lockpicking Expertise",
-  "The Tower": "The Tower grants a blessing of 20 extra carry weight and supernatural lockpicking skills. Expertise is increased by 40 and any effortless lock can be picked in plain sight with nobody noticing, creating a wax-molded copy of the key, if one exists. +20 Carry Weight, +40 Lockpicking",
-  "The Serpent": "The Bite of the Serpent will paralyze and poison a target for a moderate duration. ‘Venomous Splatter’ poison and paralyze spell"
-};
-
-  const SPEC_COMBAT_SKILLS = ["Block", "Marksman", "One-Handed", "Smithing", "Two-Handed", "Heavy Armor"];
-  const SPEC_MAGIC_SKILLS = ["Alteration", "Conjuration", "Destruction", "Enchanting", "Illusion", "Restoration"];
-  const SPEC_STEALTH_SKILLS = ["Alchemy", "Lockpicking", "Pickpocket", "Sneak", "Speechcraft", "Evasion"];
-  const SPEC_THRESHOLD = 4;
-
-  function computeSpecialization(majors) {
-    const counts = {
-      Combat: majors.filter(s => SPEC_COMBAT_SKILLS.includes(s)).length,
-      Magic: majors.filter(s => SPEC_MAGIC_SKILLS.includes(s)).length,
-      Stealth: majors.filter(s => SPEC_STEALTH_SKILLS.includes(s)).length
-    };
-    const qualified = Object.entries(counts).filter(([, count]) => count >= SPEC_THRESHOLD);
-    if (qualified.length === 0) return 'Mixed';
-    qualified.sort((a, b) => b[1] - a[1]);
-    return qualified[0][0];
-  }
-
-  standingStoneHandle = setupStandingStoneSection({
-    prefix: 'standingstone',
-    groups: STANDING_STONE_GROUPS,
-    slotCount: 2,
-    maxRolls: 2,
-    canRoll: () => raceHandle.isComplete(),
-    hintPriorName: 'Race',
-    hintNextName: 'Fate',
-    onFirstRoll: () => { raceHandle.lock(); }
-  });
-
-  fateHandle = setupSingleSelectSection({
-    prefix: 'fate',
-    allSkills: FATE_LIST,
-    slotCount: 2,
-    maxRolls: 1,
-    canRoll: () => standingStoneHandle.isComplete(),
-    hintPriorName: 'Standing Stone',
-    hintNextName: 'Starting Area',
-    onFirstRoll: () => { standingStoneHandle.lock(); }
-  });
-
-  startingAreaHandle = setupSingleSelectSection({
-    prefix: 'startingarea',
-    allSkills: () => STARTING_AREA_LISTS[fateHandle.getSelected()] || [],
-    slotCount: 2,
-    maxRolls: 2,
-    canRoll: () => fateHandle.isComplete(),
-    hintPriorName: 'Fate',
-    hintNextName: 'Dragonborn',
-    onFirstRoll: () => { fateHandle.lock(); }
-  });
-
-  dragonbornHandle = setupSingleSelectSection({
-    prefix: 'dragonborn',
-    allSkills: YES_NO_LIST,
-    slotCount: 1,
-    maxRolls: 2,
-    canRoll: () => startingAreaHandle.isComplete(),
-    hintPriorName: 'Starting Area',
-    onFirstRoll: () => { startingAreaHandle.lock(); }
-  });
-
-  updateGates();
-
-  document.getElementById('resetBtn').addEventListener('click', () => {
-    const confirmed = confirm('This will erase all your rolls and choices and start over. Are you sure?');
-    if (confirmed) {
-      location.reload();
-    }
-  });
-
-  function switchTab(target) {
-    document.querySelectorAll('.tab-panel').forEach(panel => {
-      panel.style.display = (panel.id === `tab-${target}`) ? 'block' : 'none';
-    });
-    document.querySelectorAll('.tab-btn').forEach(b => {
-      b.classList.toggle('active', b.dataset.tab === target);
-    });
-    window.scrollTo({ top: 0, behavior: 'instant' });
-  }
-
-  document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
-  });
-
-  document.querySelectorAll('[data-goto-tab]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      if (btn.disabled) return;
-      switchTab(btn.dataset.gotoTab);
-    });
-  });
-
-  // ---- Character Sheet export ----
-  function setExportBusy(busy, message) {
-    const buttons = [
-      document.getElementById('exportPngBtn'),
-      document.getElementById('exportJpgBtn'),
-      document.getElementById('exportPdfBtn')
-    ];
-    buttons.forEach(btn => { btn.disabled = busy; });
-    const hintEl = document.getElementById('export-hint');
-    hintEl.textContent = message || '';
-    hintEl.style.display = message ? 'block' : 'none';
-  }
-
-  async function captureSummaryCanvas() {
-    const target = document.getElementById('summary-section');
-    return html2canvas(target, {
-      backgroundColor: '#14110f',
-      scale: 2,
-      useCORS: true
-    });
-  }
-
-  async function exportAsImage(mimeType, extension) {
-    if (typeof html2canvas === 'undefined') {
-      setExportBusy(false, 'Export library failed to load. Check your internet connection and try again.');
-      return;
-    }
-    setExportBusy(true, 'Preparing image\u2026');
-    try {
-      const canvas = await captureSummaryCanvas();
-      const quality = mimeType === 'image/jpeg' ? 0.95 : undefined;
-      const dataUrl = canvas.toDataURL(mimeType, quality);
-      const link = document.createElement('a');
-      link.href = dataUrl;
-      link.download = `character-sheet.${extension}`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      setExportBusy(false, '');
-    } catch (err) {
-      setExportBusy(false, 'Something went wrong while exporting. Please try again.');
-    }
-  }
-
-  async function exportAsPDF() {
-    if (typeof html2canvas === 'undefined' || typeof window.jspdf === 'undefined') {
-      setExportBusy(false, 'Export library failed to load. Check your internet connection and try again.');
-      return;
-    }
-    setExportBusy(true, 'Preparing PDF\u2026');
-    try {
-      const canvas = await captureSummaryCanvas();
-      const imgData = canvas.toDataURL('image/png');
-      const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF({
-        orientation: canvas.width >= canvas.height ? 'landscape' : 'portrait',
-        unit: 'px',
-        format: [canvas.width, canvas.height]
-      });
-      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
-      pdf.save('character-sheet.pdf');
-      setExportBusy(false, '');
-    } catch (err) {
-      setExportBusy(false, 'Something went wrong while exporting. Please try again.');
-    }
-  }
-
-  document.getElementById('exportPngBtn').addEventListener('click', () => exportAsImage('image/png', 'png'));
-  document.getElementById('exportJpgBtn').addEventListener('click', () => exportAsImage('image/jpeg', 'jpg'));
-  document.getElementById('exportPdfBtn').addEventListener('click', exportAsPDF);
-</script>
-</body>
-</html>
+        <div><b id="
