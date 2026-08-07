@@ -293,6 +293,7 @@
 
   .summary-input::placeholder { color: var(--steel); opacity: 1; font-style: italic; }
   .summary-input:focus { outline: none; border-bottom-color: var(--gold); }
+  .summary-input.filled { border-bottom-color: transparent; }
 
   .stat-block { margin-bottom: 22px; }
 
@@ -648,9 +649,9 @@
         <span class="intro-byline">by Enormous Duckling</span>
       </div>
 
-      <p>This generator aims to randomize/narrow down your options while still leave you with some illusion of choice in the process.</p>
+      <p>This generator aims to randomize/narrow down your options while still leaving you with some illusion of choice in the process.</p>
       <p>During the character generation you will be prompted to choose a total of 6 Major, 6 Minor and 6 Banned skills.</p>
-      <p>You will also have a chance to roll variatey of different character/playthrough aspects avaliable to you during character creation in Wildander modlist.</p>
+      <p>You will also have a chance to roll variety of different character/playthrough aspects available to you during character creation in Wildander modlist.</p>
       <p>This includes your Race, Standing Stone, Beginnings and your fate as Dragonborn.</p>
 
       <div class="intro-spacer"></div>
@@ -677,10 +678,10 @@
 
       <p><a href="https://www.reddit.com/r/skyrimrequiem/comments/7p3br1/a_very_salty_character_generator/" target="_blank" rel="noopener">https://www.reddit.com/r/skyrimrequiem/comments/7p3br1/a_very_salty_character_generator/</a></p>
 
-      <p>It was also inspired by currently unavaliable "US Character Generator" by Roderick</p>
+      <p>It was also inspired by currently unavailable "US Character Generator" by Roderick</p>
       <p><a href="https://roderick.tech/ultimate-skyrim/character-gen" target="_blank" rel="noopener">https://roderick.tech/ultimate-skyrim/character-gen</a></p>
       
-      <p>Disclaimer. I do not write html, css or JS. This entire page was created using Claude which I guided step by step in order to re-create the initial version of Wildlander Charater Generator done in Excel.</p>
+      <p>Disclaimer. I do not write html, css or JS. This entire page was created using Claude which I guided step by step in order to re-create the initial version of Wildlander Character Generator done in Excel.</p>
     </div>
 
     <div class="nav-row">
@@ -1072,7 +1073,7 @@
     ],
     "power": {
       "name": "Histskin",
-      "desc": "Restore 1 Health/s for a hour, and 10 Health/s for 60 seconds"
+      "desc": "Restore 1 Health/s for an hour, and 10 Health/s for 60 seconds"
     }
   },
   "Bosmer": {
@@ -2157,6 +2158,18 @@
       useCORS: true
     });
   }
+
+  function toggleInputUnderline(el) {
+    if (!el) return;
+    el.classList.toggle('filled', el.value.trim().length > 0);
+  }
+
+  ['summary-name', 'summary-sex'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    toggleInputUnderline(el);
+    el.addEventListener('input', () => toggleInputUnderline(el));
+  });
 
   function sanitizeForFilename(str) {
     return str.trim().replace(/[\\/:*?"<>|]+/g, '').replace(/\s+/g, ' ');
