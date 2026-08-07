@@ -2158,6 +2158,34 @@
     });
   }
 
+  function sanitizeForFilename(str) {
+    return str.trim().replace(/[\\/:*?"<>|]+/g, '').replace(/\s+/g, ' ');
+  }
+
+  function buildExportFilename() {
+    const parts = ['Character Sheet'];
+
+    const raceEl = document.getElementById('summary-race');
+    const raceText = raceEl ? raceEl.textContent.trim() : '';
+    if (raceText && raceText !== 'Not chosen yet') {
+      parts.push(sanitizeForFilename(raceText));
+    }
+
+    const sexEl = document.getElementById('summary-sex');
+    const sexText = sexEl ? sexEl.value.trim() : '';
+    if (sexText) {
+      parts.push(sanitizeForFilename(sexText));
+    }
+
+    const nameEl = document.getElementById('summary-name');
+    const nameText = nameEl ? nameEl.value.trim() : '';
+    if (nameText) {
+      parts.push(sanitizeForFilename(nameText));
+    }
+
+    return parts.join(' ') + '.jpg';
+  }
+
   async function exportCharacterSheet() {
     if (typeof html2canvas === 'undefined') {
       setExportBusy(false, 'Export library failed to load. Check your internet connection and try again.');
@@ -2169,7 +2197,7 @@
       const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
       const link = document.createElement('a');
       link.href = dataUrl;
-      link.download = 'character-sheet.jpg';
+      link.download = buildExportFilename();
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
