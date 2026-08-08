@@ -13,6 +13,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Wildlander Character Generator</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Spectral:wght@400;500;600&display=swap');
 
@@ -65,16 +66,16 @@
     font-size: var(--fs-xs);
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--steel);
+    color: var(--gold);
     background: transparent;
-    border: 1px solid var(--line);
+    border: 1px solid var(--gold);
     padding: 9px 20px;
     border-radius: 3px;
     cursor: pointer;
     transition: all 0.15s ease;
   }
 
-  .reset-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .reset-btn:hover { background: rgba(184, 147, 74, 0.2); }
 
   .reset-btn.confirm-armed,
   .reset-btn.confirm-armed:hover {
@@ -719,7 +720,7 @@
 
     <div class="tab-panel is-hidden" id="tab-rolldice">
     <div class="reset-row">
-      <button class="reset-btn" id="resetBtn">Reset</button>
+      <button class="reset-btn" id="resetBtn">Reset choices</button>
     </div>
 
     <section class="section section-card" id="combat-section">
@@ -919,7 +920,8 @@
 
     <div class="tab-panel is-hidden" id="tab-summary">
     <div class="export-row">
-      <button class="export-btn" id="exportJpgBtn">Download Character Sheet</button>
+      <button class="export-btn" id="exportJpgBtn">Download Character Sheet (JPG)</button>
+      <button class="export-btn" id="exportPdfBtn">Download Character Sheet (PDF)</button>
       <button class="export-btn" id="exportJsonBtn">Export Character (JSON)</button>
       <label class="export-btn" for="importJsonInput">Import Character (JSON)</label>
       <input type="file" id="importJsonInput" accept=".json,application/json" class="visually-hidden">
@@ -2367,8 +2369,8 @@
   });
 
   // ---- Character Sheet export ----
-  function setExportBusy(busy, message) {
-    document.getElementById('exportJpgBtn').disabled = busy;
+  function setExportBusy(btnId, busy, message) {
+    document.getElementById(btnId).disabled = busy;
     setStatusHint(message, false);
   }
 
@@ -2426,10 +2428,10 @@
 
   async function exportCharacterSheet() {
     if (typeof html2canvas === 'undefined') {
-      setExportBusy(false, 'Export library failed to load. Check your internet connection and try again.');
+      setExportBusy('exportJpgBtn', false, 'Export library failed to load. Check your internet connection and try again.');
       return;
     }
-    setExportBusy(true, 'Preparing image\u2026');
+    setExportBusy('exportJpgBtn', true, 'Preparing image\u2026');
     try {
       const canvas = await captureSummaryCanvas();
       const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
@@ -2439,13 +2441,48 @@
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      setExportBusy(false, '');
+      setExportBusy('exportJpgBtn', false, '');
     } catch (err) {
-      setExportBusy(false, 'Something went wrong while exporting. Please try again.');
+      setExportBusy('exportJpgBtn', false, 'Something went wrong while exporting. Please try again.');
     }
   }
 
   document.getElementById('exportJpgBtn').addEventListener('click', exportCharacterSheet);
+
+  async function exportCharacterPdf() {
+    if (typeof html2canvas === 'undefined') {
+      setExportBusy('exportPdfBtn', false, 'Export library failed to load. Check your internet connection and try again.');
+      return;
+    }
+    if (typeof window.jspdf === 'undefined') {
+      setExportBusy('exportPdfBtn', false, 'PDF library failed to load. Check your internet connection and try again.');
+      return;
+    }
+    setExportBusy('exportPdfBtn', true, 'Preparing PDF\u2026');
+    try {
+      const canvas = await captureSummaryCanvas();
+      const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+      const { jsPDF } = window.jspdf;
+      // Size the PDF page to match the captured sheet's own proportions
+      // (converting CSS pixels to points at 72/96 dpi) so nothing gets
+      // cropped or padded with empty space.
+      const pdfWidth = canvas.width * 0.75;
+      const pdfHeight = canvas.height * 0.75;
+      const pdf = new jsPDF({
+        orientation: pdfHeight > pdfWidth ? 'portrait' : 'landscape',
+        unit: 'pt',
+        format: [pdfWidth, pdfHeight]
+      });
+      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save(buildExportFilename('pdf'));
+      setExportBusy('exportPdfBtn', false, '');
+    } catch (err) {
+      setExportBusy('exportPdfBtn', false, 'Something went wrong while exporting. Please try again.');
+    }
+  }
+
+  document.getElementById('exportPdfBtn').addEventListener('click', exportCharacterPdf);
 
   // ---- JSON export / import ----
   function setStatusHint(message, isError) {
