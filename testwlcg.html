@@ -280,10 +280,96 @@
     margin-bottom: 22px;
   }
 
+  .summary-top {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+  }
+
+  .summary-portrait-wrap {
+    flex: 0 0 auto;
+  }
+
+  .summary-portrait-frame {
+    position: relative;
+    width: 128px;
+    height: 128px;
+    border: 1px solid var(--steel);
+    border-radius: 6px;
+    background: var(--bg);
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .summary-portrait {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .summary-portrait-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 10px;
+    font-family: 'Cinzel', serif;
+    font-weight: 600;
+    font-size: 0.65rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--parchment);
+    background: rgba(20, 17, 15, 0.72);
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    pointer-events: none;
+  }
+
+  .summary-portrait-frame:hover .summary-portrait-overlay,
+  .summary-portrait-frame:focus-visible .summary-portrait-overlay {
+    opacity: 1;
+  }
+
+  .portrait-reset-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(20, 17, 15, 0.78);
+    color: var(--parchment);
+    border: 1px solid var(--steel);
+    font-size: 13px;
+    line-height: 1;
+    padding: 0;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s ease, background 0.15s ease;
+    z-index: 2;
+  }
+
+  .portrait-reset-btn:hover {
+    background: rgba(184, 147, 74, 0.35);
+  }
+
+  .summary-portrait-frame:hover .portrait-reset-btn,
+  .summary-portrait-frame:focus-within .portrait-reset-btn {
+    opacity: 1;
+  }
+
   .summary-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 26px 20px;
+    flex: 1 1 340px;
+    min-width: 300px;
   }
 
   .summary-field { min-width: 0; }
@@ -482,6 +568,9 @@
   @media (max-width: 700px) {
     .summary-grid { grid-template-columns: repeat(2, 1fr); }
     .summary-columns { grid-template-columns: repeat(2, 1fr); }
+    .summary-top { flex-direction: column; gap: 20px; }
+    .summary-portrait-wrap { width: 100%; margin-bottom: 12px; }
+    .summary-portrait-frame { width: 100%; height: auto; aspect-ratio: 1 / 1; }
   }
 
   .intro-card {
@@ -620,7 +709,7 @@
     display: grid;
     grid-template-columns: 1fr;
     gap: 12px;
-    margin-bottom: 12px;
+    margin-bottom: 6px;
   }
 
   @media (min-width: 640px) {
@@ -670,7 +759,7 @@
     border: 0;
   }
 
-  #export-hint { text-align: center; margin-top: 0; margin-bottom: 24px; min-height: 1em; }
+  #export-hint { text-align: center; margin-top: 0; margin-bottom: 10px; min-height: 1em; }
 
   @media (max-width: 460px) {
     .export-btn { font-size: 0.68rem; padding: 10px 12px; letter-spacing: 0.03em; }
@@ -678,6 +767,7 @@
     .summary-grid { grid-template-columns: 1fr; }
     .summary-columns { grid-template-columns: 1fr; }
     .summary-card { padding: 20px; }
+    .summary-top { justify-content: center; }
     .intro-byline { position: static; display: block; margin-top: 4px; }
     .intro-title { font-size: 1.25rem; }
     .tab-btn { font-size: var(--fs-xs); padding: 10px 4px; }
@@ -950,8 +1040,17 @@
     </div>
     <div class="hint" id="export-hint"></div>
     <section class="section" id="summary-section">
-      <div class="summary-card">
-        <div class="summary-grid">
+      <div class="summary-card" id="summaryTrim">
+        <div class="summary-top">
+        <div class="summary-portrait-wrap">
+          <div class="summary-portrait-frame" id="portraitFrame" tabindex="0" role="button" aria-label="Change character portrait">
+            <img class="summary-portrait" id="summary-portrait" alt="Character portrait" crossorigin="anonymous" src="">
+            <div class="summary-portrait-overlay">Change Portrait</div>
+            <button type="button" class="portrait-reset-btn" id="portraitResetBtn" title="Reset to default portrait" aria-label="Reset portrait to default">&#8635;</button>
+          </div>
+          <input type="file" id="portraitUploadInput" accept="image/*" class="visually-hidden">
+        </div>
+        <div class="summary-grid" id="summaryFieldsGrid">
           <div class="summary-field">
             <span class="summary-label">Name</span>
             <input class="summary-input" type="text" id="summary-name" placeholder="Enter Character Name">
@@ -985,6 +1084,7 @@
             <span class="summary-label">Area</span>
             <span class="summary-value" id="summary-area">Not chosen yet</span>
           </div>
+        </div>
         </div>
       </div>
 
@@ -1065,6 +1165,7 @@
   </div>
 
 <script>
+  const DEFAULT_PORTRAIT_SRC = "https://raw.githubusercontent.com/EnormousDuckling/Wildander-Character-Generator/main/Image/DefaultPortraitImage.jpg";
   const COMBAT_SKILLS = [
     "Alteration", "Block", "Conjuration", "Destruction", "Illusion",
     "Marksman", "One-Handed", "Restoration", "Two-Handed"
@@ -1872,6 +1973,7 @@
       activeTab: (document.querySelector('.tab-btn.active') && document.querySelector('.tab-btn.active').dataset.tab) || 'introduction',
       name: document.getElementById('summary-name').value,
       sex: document.getElementById('summary-sex').value,
+      portrait: document.getElementById('summary-portrait').src,
       sections: {
         combat: combatHandle.getState(),
         noncombat: noncombatHandle.getState(),
@@ -1933,6 +2035,9 @@
     sexEl.value = saved.sex || '';
     toggleInputUnderline(nameEl);
     toggleInputUnderline(sexEl);
+
+    const portraitEl = document.getElementById('summary-portrait');
+    portraitEl.src = saved.portrait || DEFAULT_PORTRAIT_SRC;
 
     updateGates();
   }
@@ -2422,6 +2527,119 @@
       persistState();
     });
   });
+
+  // ---- Character portrait ----
+  (function initPortrait() {
+    const portraitEl = document.getElementById('summary-portrait');
+    const frameEl = document.getElementById('portraitFrame');
+    const uploadInput = document.getElementById('portraitUploadInput');
+    if (!portraitEl) return;
+
+    if (!portraitEl.src) portraitEl.src = DEFAULT_PORTRAIT_SRC;
+
+    portraitEl.addEventListener('error', () => {
+      if (portraitEl.dataset.fallbackFailed) return;
+      portraitEl.dataset.fallbackFailed = '1';
+      setStatusHint('Could not load the default portrait image. Check your internet connection.', true);
+    });
+
+    if (frameEl && uploadInput) {
+      frameEl.addEventListener('click', () => uploadInput.click());
+      frameEl.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          uploadInput.click();
+        }
+      });
+    }
+
+    if (uploadInput) {
+      uploadInput.addEventListener('change', (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        if (!file.type.startsWith('image/')) {
+          setStatusHint('Please choose an image file for the portrait.', true);
+          e.target.value = '';
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = () => {
+          portraitEl.src = reader.result;
+          persistState();
+        };
+        reader.onerror = () => {
+          setStatusHint('Could not read that image. Please try again.', true);
+        };
+        reader.readAsDataURL(file);
+        e.target.value = '';
+      });
+    }
+
+    const resetBtn = document.getElementById('portraitResetBtn');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        portraitEl.src = DEFAULT_PORTRAIT_SRC;
+        persistState();
+        setStatusHint('Portrait reset to default.', false);
+      });
+    }
+
+    // Keep the portrait a perfect square that tracks the golden trim
+    // (the summary card) around it: its height on desktop (side-by-side),
+    // its width once the layout collapses to a single column (portrait
+    // stacked above the fields) — inset by a small equal margin.
+    //
+    // NOTE: on desktop we can't measure the trim's own height directly,
+    // because the portrait sits inside it — growing the portrait would
+    // grow the trim, which would grow the portrait again (infinite loop).
+    // Instead we match the field grid's own height directly, since the
+    // grid's height already equals the trim's inner content height.
+    const trimEl = document.getElementById('summaryTrim');
+    const gridEl = document.getElementById('summaryFieldsGrid');
+    const stackQuery = window.matchMedia('(max-width: 700px)');
+    const PORTRAIT_MARGIN = 1.5; // px, applied to each side
+
+    function syncPortraitSize() {
+      if (!frameEl || !trimEl) return;
+      const cs = getComputedStyle(trimEl);
+      const padLeft = parseFloat(cs.paddingLeft) || 0;
+      const padRight = parseFloat(cs.paddingRight) || 0;
+
+      let size;
+      if (stackQuery.matches) {
+        // Mobile: the trim's width isn't affected by the portrait's own
+        // size, so it's safe to read directly.
+        const trimRect = trimEl.getBoundingClientRect();
+        size = trimRect.width - padLeft - padRight - (PORTRAIT_MARGIN * 2);
+      } else {
+        // Desktop: match the field grid's own height directly, so the
+        // portrait never sticks out taller than the fields beside it.
+        if (!gridEl) return;
+        const gridRect = gridEl.getBoundingClientRect();
+        size = gridRect.height - (PORTRAIT_MARGIN * 2);
+      }
+
+      if (size > 0) {
+        frameEl.style.width = size + 'px';
+        frameEl.style.height = size + 'px';
+      }
+    }
+
+    if (trimEl && frameEl) {
+      if (typeof ResizeObserver !== 'undefined') {
+        const ro = new ResizeObserver(() => syncPortraitSize());
+        if (gridEl) ro.observe(gridEl);
+        ro.observe(trimEl);
+      }
+      window.addEventListener('resize', syncPortraitSize);
+      if (stackQuery.addEventListener) {
+        stackQuery.addEventListener('change', syncPortraitSize);
+      }
+      window.addEventListener('load', syncPortraitSize);
+      syncPortraitSize();
+    }
+  })();
 
   function sanitizeForFilename(str) {
     return str.trim().replace(/[\\/:*?"<>|]+/g, '').replace(/\s+/g, ' ');
